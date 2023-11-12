@@ -26,24 +26,14 @@ if (flag):
         mask_yellow = cv2.medianBlur(mask_yellow, 7)  
         mask_blue = cv2.medianBlur(mask_blue, 7)  
         mask = cv2.bitwise_or(mask_yellow, mask_blue)
-        contours, hierarchy = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contours2, hierarchy2 = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
- 
-        for cnt in contours:
-            (x, y, w, h) = cv2.boundingRect(cnt)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 255), 2)
-            cv2.putText(frame, "yellow", (x, y - 5), font, 0.7, (0, 255, 0), 2)
-            
-            hull = cv2.convexHull(contours[0])
-            cv2.polylines(frame, [hull], True, (0, 255, 0), 2)
- 
-        for cnt2 in contours2:
-            (x2, y2, w2, h2) = cv2.boundingRect(cnt2)
-            cv2.rectangle(frame, (x2, y2), (x2 + w2, y2 + h2), (0, 255, 255), 2)
-            cv2.putText(frame, "blue", (x2, y2 - 5), font, 0.7, (0, 0, 255), 2)
-            
-            hull2 = cv2.convexHull(contours2[0])
-            cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
+        contours  = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours2 = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        hull = cv2.convexHull(contours[0])
+        hull2 = cv2.convexHull(contours2[0])
+        cv2.polylines(frame, [hull], True, (0, 255, 0), 2)
+        cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
+        
         num = num + 1
         cv2.imshow("result", frame)
         cv2.imwrite("imgs/%d.jpg"%num, frame)
