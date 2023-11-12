@@ -43,8 +43,8 @@ if (flag):
         mask_yellow = cv2.medianBlur(mask_yellow, 7)  
         mask_blue = cv2.medianBlur(mask_blue, 7)  
         mask = cv2.bitwise_or(mask_yellow, mask_blue)
-        contours，hierarchy = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contours2，hierarchy2 = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours2, hierarchy2 = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         hull = cv2.convexHull(contours[0])
         hull2 = cv2.convexHull(contours2[0])
