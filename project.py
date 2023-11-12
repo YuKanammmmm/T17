@@ -52,8 +52,8 @@ if (flag):
         cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
 
         #
-        hough = cv2.HoughLines(hull, rho, theta, threshold)
-        hough2 = cv2.HoughLines(hull2, rho, theta, threshold)
+        hough = cv2.HoughLines(contours[0], rho, theta, threshold)
+        hough2 = cv2.HoughLines(contours[0], rho, theta, threshold)
         draw_lines(frame, hough)
         draw_lines(frame, hough2)
         #
