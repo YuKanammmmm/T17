@@ -52,8 +52,17 @@ if (flag):
         cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
 
         #
-        hough = cv2.HoughLines(contours[0], rho, theta, threshold)
-        hough2 = cv2.HoughLines(contours[0], rho, theta, threshold)
+        ## white and black
+        img_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        
+        ## glass
+        img_blur = cv2.GaussianBlur(img_gray, (5,5), 0)
+        
+        ## edge
+        img_edges = cv2.Canny(img_blur, 50, 120)
+        
+        hough = cv2.HoughLines(img_edges, rho, theta, threshold)
+        hough2 = cv2.HoughLines(img_edges, rho, theta, threshold)
         draw_lines(frame, hough)
         draw_lines(frame, hough2)
         #
