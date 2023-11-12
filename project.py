@@ -63,8 +63,8 @@ if (flag):
         
         hough = cv2.HoughLines(img_edges, rho, theta, threshold)
         hough2 = cv2.HoughLines(img_edges, rho, theta, threshold)
-        draw_lines(frame, hough)
-        draw_lines(frame, hough2)
+        draw_lines(np.zeros_like(frame), hough)
+        draw_lines( np.zeros_like(frame), hough2)
         #
         
         num = num + 1
