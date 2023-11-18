@@ -47,28 +47,30 @@ if (flag):
             break
         hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask_yellow = cv2.inRange(hsv_img, lower_yellow, upper_yellow)  
-        mask_blue = cv2.inRange(hsv_img, lower_blue, upper_blue)
+        mask_blue   = cv2.inRange(hsv_img, lower_blue, upper_blue)
         mask_yellow_out = cv2.medianBlur(mask_yellow, 7)  
-        mask_blue_out = cv2.medianBlur(mask_blue, 7)
-        contours, hierarchy = cv2.findContours(mask_yellow_out, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        mask_blue_out   = cv2.medianBlur(mask_blue, 7)
+        contours, hierarchy   = cv2.findContours(mask_yellow_out, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours2, hierarchy2 = cv2.findContours(mask_blue_out, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
-        hull = cv2.convexHull(contours[0])
+        hull  = cv2.convexHull(contours[0])
         hull2 = cv2.convexHull(contours2[0])
-        cv2.polylines(frame, [hull], True, (0, 255, 0), 2)
+        cv2.polylines(frame, [hull],  True, (0, 255, 0), 2)
         cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
 
         # for point in contours[0]:
         for point in hull:
-            p = point[0]
-            x = p[0].astype(np.int)
-            y = p[1].astype(np.int)
+            # p = point[0]
+            # x = p[0].astype(np.int)
+            # y = p[1].astype(np.int)
+            x,y = point[0]
             key_points.append((x,y))
             cv2.circle(frame, (x, y), 2, [255,0,0], 2)     
         for point in hull2:
-            p = point[0]
-            x = p[0].astype(np.int)
-            y = p[1].astype(np.int)
+            # p = point[0]
+            # x = p[0].astype(np.int)
+            # y = p[1].astype(np.int)
+            x,y = point[0]
             key_points2.append((x,y))
             cv2.circle(frame, (x, y), 2, [255,0,0], 2)
         
@@ -78,7 +80,7 @@ if (flag):
         rho = 1
         theta = np.pi/180
         threshold = 140
-        hough_lines = cv2.HoughLines(img,rho , theta , threshold)
+        hough_lines = cv2.HoughLines(img, rho, theta, threshold)
         # return
         # img_lines = np.zeros_like(img)
         draw_lines(frame, hough_lines)
