@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
@@ -12,28 +13,25 @@ upper_blue = np.array([130, 255, 255])
 pixiv_x = 1920
 pixiv_y = 1088
 
-key_points = []
-key_points2 = []
-
 # hough
 def draw_lines(img, houghLines, color=[0, 0, 255], thickness=1):
-    for line in houghLines:
-        for rho,theta in line:
-            a = np.cos(theta)
-            b = np.sin(theta)
-            x0 = a*rho
-            y0 = b*rho
-            x1 = int(x0 + 2000*(-b))
-            y1 = int(y0 + 2000*(a))
-            x2 = int(x0 - 2000*(-b))
-            y2 = int(y0 - 2000*(a))
-            cv2.line(img,(x1,y1),(x2,y2),color,thickness)   
-         
-# hough
-# def weighted_img(img, initial_img, alpha=0.8, beta=1., u=0.):
-#     return cv2.addWeighted(initial_img, alpha, img, beta, u) 
+    try:
+        for line in houghLines:
+            for rho,theta in line:
+                a = np.cos(theta)
+                b = np.sin(theta)
+                x0 = a*rho
+                y0 = b*rho
+                x1 = int(x0 + 2000*(-b))
+                y1 = int(y0 + 2000*(a))
+                x2 = int(x0 - 2000*(-b))
+                y2 = int(y0 - 2000*(a))
+                cv2.line(img,(x1,y1),(x2,y2),color,thickness)
+    except:
+        logging.info('hough error')
 
 cap = cv2.VideoCapture("C:/Users/28228/Desktop/Subject1.mp4")
+
 if (cap.isOpened()):  
     flag = 1
 else:
@@ -55,24 +53,24 @@ if (flag):
         
         hull  = cv2.convexHull(contours[0])
         hull2 = cv2.convexHull(contours2[0])
-        cv2.polylines(frame, [hull],  True, (0, 255, 0), 2)
-        cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
+        # cv2.polylines(frame, [hull],  True, (0, 255, 0), 2)
+        # cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
 
-        # for point in contours[0]:
-        for point in hull:
-            # p = point[0]
-            # x = p[0].astype(np.int)
-            # y = p[1].astype(np.int)
-            x,y = point[0]
-            key_points.append((x,y))
-            cv2.circle(frame, (x, y), 2, [255,0,0], 2)     
-        for point in hull2:
-            # p = point[0]
-            # x = p[0].astype(np.int)
-            # y = p[1].astype(np.int)
-            x,y = point[0]
-            key_points2.append((x,y))
-            cv2.circle(frame, (x, y), 2, [255,0,0], 2)
+        # 凸包边缘点集
+        # for point in hull:
+        #     x,y = point[0]
+        #     cv2.circle(frame, (x, y), 2, [255,0,0], 2)
+        # for point in hull2:
+        #     x,y = point[0]
+        #     cv2.circle(frame, (x, y), 2, [255,0,0], 2)
+        
+        ep = 15
+        # 拟合精度，长度小于该值的线段将被忽略
+        # 该值越小则得到的轮廓中可存在的线段长度越小
+        approx = cv2.approxPolyDP(hull, ep, True)
+        cv2.polylines(frame, [approx], True, [0, 255, 0], 2)
+        approx2 = cv2.approxPolyDP(hull2, ep, True)
+        cv2.polylines(frame, [approx2], True, [0, 255, 0], 2)
         
         # edge
         img = cv2.Canny(frame,700,800)
@@ -85,17 +83,6 @@ if (flag):
         # img_lines = np.zeros_like(img)
         draw_lines(frame, hough_lines)
         # img_lines = weighted_img(img_lines,img)
-        
-        # plt.figure(figsize=(15,5))
-        # plt.subplot(1,2,1)
-        # plt.imshow(frame,cmap="gray")
-        # plt.title("source",fontsize=12)
-        # plt.axis("off")
-        # plt.subplot(1,2,2)
-        # plt.imshow(img_lines)
-        # plt.title("image with hough lines",fontsize=12)
-        # plt.axis("off")
-        # plt.show()
 
         num = num + 1
         cv2.imshow("result", frame)
