@@ -1,6 +1,6 @@
-import logging
 import numpy as np
 import cv2
+import matplotlib.pyplot as plt
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 lower_yellow = np.array([20, 100, 100])  
@@ -14,6 +14,24 @@ pixiv_y = 1088
 
 key_points = []
 key_points2 = []
+
+# hough
+def draw_lines(img, houghLines, color=[0, 0, 255], thickness=1):
+    for line in houghLines:
+        for rho,theta in line:
+            a = np.cos(theta)
+            b = np.sin(theta)
+            x0 = a*rho
+            y0 = b*rho
+            x1 = int(x0 + 2000*(-b))
+            y1 = int(y0 + 2000*(a))
+            x2 = int(x0 - 2000*(-b))
+            y2 = int(y0 - 2000*(a))
+            cv2.line(img,(x1,y1),(x2,y2),color,thickness)   
+         
+# hough
+# def weighted_img(img, initial_img, alpha=0.8, beta=1., u=0.):
+#     return cv2.addWeighted(initial_img, alpha, img, beta, u) 
 
 cap = cv2.VideoCapture("C:/Users/28228/Desktop/Subject1.mp4")
 if (cap.isOpened()):  
@@ -29,23 +47,16 @@ if (flag):
             break
         hsv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         mask_yellow = cv2.inRange(hsv_img, lower_yellow, upper_yellow)  
-        mask_blue = cv2.inRange(hsv_img, lower_blue, upper_blue) 
-
-        mask_yellow = cv2.medianBlur(mask_yellow, 7)  
-        mask_blue = cv2.medianBlur(mask_blue, 7)  
-        mask = cv2.bitwise_or(mask_yellow, mask_blue)
-        contours, hierarchy = cv2.findContours(mask_yellow, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contours2, hierarchy2 = cv2.findContours(mask_blue, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        mask_blue = cv2.inRange(hsv_img, lower_blue, upper_blue)
+        mask_yellow_out = cv2.medianBlur(mask_yellow, 7)  
+        mask_blue_out = cv2.medianBlur(mask_blue, 7)
+        contours, hierarchy = cv2.findContours(mask_yellow_out, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours2, hierarchy2 = cv2.findContours(mask_blue_out, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
         hull = cv2.convexHull(contours[0])
         hull2 = cv2.convexHull(contours2[0])
         cv2.polylines(frame, [hull], True, (0, 255, 0), 2)
         cv2.polylines(frame, [hull2], True, (0, 255, 0), 2)
-
-        # gray_y = cv2.cvtColor(mask_yellow, cv2.COLOR_BGR2GRAY)
-        # edge_y = cv2.Canny(gray_y, 50, 50)
-        # line_y = cv2.HoughLines(edge_y, rho, theta, threshold)
-        # draw_hough_lines(frame, line_y)
 
         # for point in contours[0]:
         for point in hull:
@@ -53,8 +64,7 @@ if (flag):
             x = p[0].astype(np.int)
             y = p[1].astype(np.int)
             key_points.append((x,y))
-            cv2.circle(frame, (x, y), 2, [255,0,0], 2)
-            
+            cv2.circle(frame, (x, y), 2, [255,0,0], 2)     
         for point in hull2:
             p = point[0]
             x = p[0].astype(np.int)
@@ -62,29 +72,28 @@ if (flag):
             key_points2.append((x,y))
             cv2.circle(frame, (x, y), 2, [255,0,0], 2)
         
-        # for key_point in key_points:
-        #     conver_point_temp = []
-        #     for theta in range(-90, 90):
-        #         x, y = key_point
-        #         rad = theta / 180 * np.pi
-        #         rho = x * np.cos(rad) + y * np.sin(rad)
-        #         conver_point_temp.append((int(theta), int(rho)))
-        #     conver_points.append(conver_point_temp)
-
-        # for conver_point in conver_points:
-        #     for point in conver_point:
-        #         theta, rho = point
-        #         key = f"{theta}{rho}"
-        #         if key not in point_vote:
-        #             point_vote[key] = 0
-        #         point_vote[key] += 1
+        # edge
+        img = cv2.Canny(frame,700,800)
+        # hough
+        rho = 1
+        theta = np.pi/180
+        threshold = 140
+        hough_lines = cv2.HoughLines(img,rho , theta , threshold)
+        # return
+        # img_lines = np.zeros_like(img)
+        draw_lines(frame, hough_lines)
+        # img_lines = weighted_img(img_lines,img)
         
-        # result = sorted(point_vote.items(), key=lambda d: d[1], reverse=True)[0][0]
-        # result = tuple(map(int, result.split()))
-        # theta, rho = result
-        # radd = theta / 180 * np.pi
-        # getY = lambda r, t, x: int((rho-x*np.cos(radd)))/np.sin(radd)
-        # cv2.line(frame, (0, getY(rho,theta,0)), (pixiv_x, getY(rho,theta, pixiv_y)), 255)
+        # plt.figure(figsize=(15,5))
+        # plt.subplot(1,2,1)
+        # plt.imshow(frame,cmap="gray")
+        # plt.title("source",fontsize=12)
+        # plt.axis("off")
+        # plt.subplot(1,2,2)
+        # plt.imshow(img_lines)
+        # plt.title("image with hough lines",fontsize=12)
+        # plt.axis("off")
+        # plt.show()
 
         num = num + 1
         cv2.imshow("result", frame)
