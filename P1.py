@@ -149,14 +149,14 @@ while True:
                 approx_yellow = cv2.approxPolyDP(hull_yellow, ep, True)
                 cv2.polylines(frame, [approx_yellow], True, [0, 255, 0], 2)
                 
-                print(f"before: {approx_yellow}")
+                print(f"before:\n{approx_yellow}")
                 # fox 2 返回一个元组，包括排序后的点集和错误状态记录
                 # value1, value2 = my_function()
                 # value1, _ = my_function() # 只关心第一个返回值
                 # _, value2 = my_function() # 只关心第二个返回值
                 if_error = fox_2_yellow(approx_yellow, radius)
-                print(f"after_: {global_approx_yellow}")
-                print(f"if_err: {if_error}")
+                print(f"after_:\n{global_approx_yellow}")
+                print(f"if_err: {if_error}\n")
             
                 # # -----------------------------------------------------------------------------------------------------
                 # # 如果有上一帧的顶点集，则使用 fox-2 方法进行跟踪和排序
