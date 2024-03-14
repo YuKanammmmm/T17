@@ -364,6 +364,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_blue[0] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             blue_1.appendleft(global_approx_blue[0])
             blue_list_1 = [tuple(array[0]) for array in blue_1]
@@ -377,6 +381,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_blue[1] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             blue_2.appendleft(global_approx_blue[1])
             blue_list_2 = [tuple(array[0]) for array in blue_2]
@@ -390,6 +398,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_blue[2] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             blue_3.appendleft(global_approx_blue[2])
             blue_list_3 = [tuple(array[0]) for array in blue_3]
@@ -403,6 +415,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_blue[3] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             blue_4.appendleft(global_approx_blue[3])
             blue_list_4 = [tuple(array[0]) for array in blue_4]
@@ -417,6 +433,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_yellow[0] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             yellow_1.appendleft(global_approx_yellow[0])
             yellow_list_1 = [tuple(array[0]) for array in yellow_1]
@@ -430,6 +450,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_yellow[1] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             yellow_2.appendleft(global_approx_yellow[1])
             yellow_list_2 = [tuple(array[0]) for array in yellow_2]
@@ -443,6 +467,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_yellow[2] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             yellow_3.appendleft(global_approx_yellow[2])
             yellow_list_3 = [tuple(array[0]) for array in yellow_3]
@@ -456,6 +484,10 @@ while True:
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
             global_approx_yellow[3] = (x, y)
             occlusion_b = 1
+            if x > 1920:
+                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+            if y > 1088:
+                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
         else:
             yellow_4.appendleft(global_approx_yellow[3])
             yellow_list_4 = [tuple(array[0]) for array in yellow_4]
