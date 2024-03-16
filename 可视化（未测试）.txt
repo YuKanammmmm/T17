@@ -1,0 +1,36 @@
+# 创建一个黑色背景图像
+width, height = 800, 600
+background = np.zeros((height, width, 3), dtype=np.uint8)
+
+# 定义3D坐标系的原点
+origin = (width // 2, height // 2)
+
+# 定义3D坐标系的轴向
+axis_length = 200
+x_axis_end = (origin[0] + axis_length, origin[1], 0)
+y_axis_end = (origin[0], origin[1] - axis_length, 0)
+z_axis_end = (origin[0], origin[1], axis_length)
+
+# 绘制坐标系的三条轴线
+cv2.line(background, origin, x_axis_end[:2], (0, 0, 255), 2)
+cv2.line(background, origin, y_axis_end[:2], (0, 255, 0), 2)
+cv2.line(background, origin, z_axis_end[:2], (255, 0, 0), 2)
+
+# 在原点处添加文字标签
+cv2.putText(background, 'X', x_axis_end[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+cv2.putText(background, 'Y', y_axis_end[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+cv2.putText(background, 'Z', z_axis_end[:2], cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+
+# 获取点位置（3D坐标）
+point = np.array([xt, 0, 0])
+
+# 投影点到2D图像中
+projected_point = (int(origin[0] + point[0]), int(origin[1] - point[1]))
+
+# 绘制当前点的位置
+cv2.circle(background, projected_point, 2, (255, 255, 255), -1)
+
+# 显示图像
+cv2.imshow('3D Coordinate System with Trajectory', background)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
