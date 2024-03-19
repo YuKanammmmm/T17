@@ -1,4 +1,7 @@
 import numpy as np
+import time
+
+import cv2
 
 def array_to_list(coordinates_array):
 # 将三维数组转换为二维数组
@@ -49,8 +52,8 @@ def distance_midpoints_lines(midpoint,slope_and_intercept):
         distances.append(distance)
     return distances
 
-
 def kf(point_list):
+    X_posterior_list = []
     # x1,y1,dx, dy
     # 状态转移矩阵
     A = np.array([[1, 0, 0, 0],
@@ -63,7 +66,7 @@ def kf(point_list):
 
     # 过程噪声协方差矩阵 p(w)~N(0,Q)
     # 在跟踪任务当中，过程噪声来自于目标移动的不确定性（突然加速、减速、转弯等）
-    Q = np.eye(4) * 0.1
+    Q = np.eye(4) * 0.05
 
     # 观察噪声协方差矩阵 p(v)~N(0,R)
     # 观测噪声来自于检测框丢失、重叠等
@@ -87,11 +90,12 @@ def kf(point_list):
     approx3 = point_list[0:10]
 
     for i in range(10):
-        print(f'这是第 {i + 1} 次循环。')
+        #print(f'这是第 {i + 1} 次循环。')
 
         dx = approx3[9 - i][0] - X_posterior[0]
         dy = approx3[9 - i][1] - X_posterior[1]
-
+        #print("approx3[9-i]",approx3[9 - i])
+        #print("X_posterior", X_posterior)
         Z[0:2] = np.array(list(approx3[9 - i])).reshape(-1, 1)
         # Z[0:2] = np.array(approx2[0][0]).T
         Z[2::] = np.array([dx, dy])
@@ -99,7 +103,6 @@ def kf(point_list):
 
         # 用后验结果
         # -------进行先验估计-------------
-
         X_prior = np.dot(A, X_posterior)
         # box_prior = xywh_to_xyxy(X_prior[0:4])
         # -------计算状态协方差矩阵P--------
@@ -118,9 +121,21 @@ def kf(point_list):
         P_posterior = np.dot(P_posterior_1, P_prior)
         X_prior = X_posterior
 
+        X_posterior_list.append(X_posterior[:2])
+        X_posterior_list_1 = [(float(x[0]), float(x[1])) for x in X_posterior_list]
+
         # 如果IOU匹配失败，此时失去观测值，那么直接使用上一次的最优估计作为先验估计
         # 此时直接迭代，
         # 先验结果
     X_posterior = np.dot(A, X_posterior)
     x, y = X_posterior[0][0], X_posterior[1][0]
+
+    #plot(approx3, X_posterior_list_1, X_posterior)
+    print("****************")
+    print("approx3",approx3)
+    print("X_posterior_list_1", X_posterior_list_1)
+    print("x",X_posterior[0])
+    print("y", X_posterior[1])
+    #print("X_posterior[:2]",X_posterior[:2])
     return x,y
+

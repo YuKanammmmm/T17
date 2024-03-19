@@ -358,7 +358,17 @@ while True:
         #蓝色tapes顶点预测
         # 蓝色第一个点的历史记录
         if distances_y3[0] < 8 or (if_error_blue == 1 and i_blue == 1):
+
+            start_time = time.time()
+
             x, y = kf(blue_list_1)
+
+            # 获取循环结束的时间
+            end_time = time.time()
+            # 计算执行时间
+            execution_time = end_time - start_time
+            print("blue1循环执行时间为: {:.6f} 秒".format(execution_time))
+
             blue_1.appendleft([[x, y]])
             blue_list_1 = [tuple(array[0]) for array in blue_1]
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
@@ -375,7 +385,13 @@ while True:
 
         # 蓝色第二个点的历史记录
         if if_error_blue == 1 and i_blue == 2:
+            start_time = time.time()
             x,y = kf(blue_list_2)
+            # 获取循环结束的时间
+            end_time = time.time()
+            # 计算执行时间
+            execution_time = end_time - start_time
+            print("blue2循环执行时间为: {:.6f} 秒".format(execution_time))
             blue_2.appendleft([[x,y]])
             blue_list_2 = [tuple(array[0]) for array in blue_2]
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
@@ -392,7 +408,13 @@ while True:
 
         # 蓝色第三个点的历史记录
         if if_error_blue == 1 and i_blue == 3:
+            start_time = time.time()
             x, y = kf(blue_list_3)
+            # 获取循环结束的时间
+            end_time = time.time()
+            # 计算执行时间
+            execution_time = end_time - start_time
+            print("blue3循环执行时间为: {:.6f} 秒".format(execution_time))
             blue_3.appendleft([[x, y]])
             blue_list_3 = [tuple(array[0]) for array in blue_3]
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
@@ -409,7 +431,13 @@ while True:
 
         # 蓝色第四个点的历史记录
         if if_error_blue == 1 and i_blue == 4:
+            start_time = time.time()
             x, y = kf(blue_list_4)
+            # 获取循环结束的时间
+            end_time = time.time()
+            # 计算执行时间
+            execution_time = end_time - start_time
+            print("blue4循环执行时间为: {:.6f} 秒".format(execution_time))
             blue_4.appendleft([[x, y]])
             blue_list_4 = [tuple(array[0]) for array in blue_4]
             cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
