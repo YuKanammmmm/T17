@@ -259,6 +259,31 @@ while True:
         coordinates = np.array(global_approx_yellow)  # yellow
         coordinates2 = np.array(global_approx_blue)  # blue
 
+        #calculate the value of x and y
+        # 提取每个点的坐标
+        point1 = np.array(coordinates2[0][0])
+        point2 = np.array(coordinates2[1][0])
+        point3 = np.array(coordinates2[2][0])
+
+        # 计算第一个点和第二个点之间的距离
+        distance_12 = np.linalg.norm(point2 - point1)
+
+        # 计算第二个点和第三个点之间的距离
+        distance_23 = np.linalg.norm(point3 - point2)
+
+        # 比较距离大小并赋值给 X 和 Y
+        if distance_12 > distance_23:
+            X = distance_12
+            Y = distance_23
+        else:
+            X = distance_23
+            Y = distance_12
+
+        #print("X:", X)
+        #print("Y:", Y)
+
+
+
         # 初始化结果列表
         midpoints = []  # yellow
         midpoints2 = []  # blue
@@ -352,105 +377,142 @@ while True:
         else:
             print("没点")
 
+        #**************出界情况*************#
+
+        # 给定直线的 y 坐标
+        y_line = 1088
+     # 计算每个点到直线 y = 1088 的距离
+        distances = []
+        for coord in coordinates2:
+            # 提取坐标中的 y 值
+            y_coord = coord[0][1]
+            # 计算距离并添加到 distances 列表中
+            distance = np.abs(y_coord - y_line)
+            distances.append(distance)
+        # 打印结果
+        for i, distance in enumerate(distances):
+            print(f"点 {i + 1} 到直线的距离为：{distance}")
+
         # *********************************Kalmanfilter************************************
         occlusion_b = 0 #记录是否发生遮挡，1表示发生遮挡，0表示未发生遮挡 blue
         occlusion_y = 0 #yellow
         #蓝色tapes顶点预测
         # 蓝色第一个点的历史记录
-        if distances_y3[0] < 8 or (if_error_blue == 1 and i_blue == 1):
+        for j in range(len(distances_b4)):
+            if (distances_b4[j] > x / 2 - y and distances_b4[j] < x / 2) and \
+                    (distances_b1[j] > x / 2 - y and distances_b1[j] < x / 2) and \
+                    (distances_b4[j + 1] < y / 2 or distances_b4[j + 1] < distances_b1[j + 1] ) or \
+                    if_error_blue == 1 and i_blue == 1:
 
-            start_time = time.time()
+                start_time = time.time()
 
-            x, y = kf(blue_list_1)
+                x, y = kf(blue_list_1)
 
-            # 获取循环结束的时间
-            end_time = time.time()
-            # 计算执行时间
-            execution_time = end_time - start_time
-            print("blue1循环执行时间为: {:.6f} 秒".format(execution_time))
+                # 获取循环结束的时间
+                end_time = time.time()
+                # 计算执行时间
+                execution_time = end_time - start_time
+                print("blue1循环执行时间为: {:.6f} 秒".format(execution_time))
 
-            blue_1.appendleft([[x, y]])
-            blue_list_1 = [tuple(array[0]) for array in blue_1]
-            cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
-            global_approx_blue[0] = (x, y)
-            occlusion_b = 1
-            if x > 1920:
-                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
-            if y > 1088:
+                blue_1.appendleft([[x, y]])
+                blue_list_1 = [tuple(array[0]) for array in blue_1]
+                cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
+                global_approx_blue[0] = (x, y)
+                occlusion_b = 1
+                if x > 1920:
+                    cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+                if y > 1088:
+                    cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
+
+            if distances[1] < 1:
+                x, y = kf(blue_list_1)
                 cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
-        else:
-            blue_1.appendleft(global_approx_blue[0])
-            blue_list_1 = [tuple(array[0]) for array in blue_1]
-            occlusion_b = 0
+            else:
+                blue_1.appendleft(global_approx_blue[0])
+                blue_list_1 = [tuple(array[0]) for array in blue_1]
+                occlusion_b = 0
 
         # 蓝色第二个点的历史记录
-        if if_error_blue == 1 and i_blue == 2:
-            start_time = time.time()
-            x,y = kf(blue_list_2)
-            # 获取循环结束的时间
-            end_time = time.time()
-            # 计算执行时间
-            execution_time = end_time - start_time
-            print("blue2循环执行时间为: {:.6f} 秒".format(execution_time))
-            blue_2.appendleft([[x,y]])
-            blue_list_2 = [tuple(array[0]) for array in blue_2]
-            cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
-            global_approx_blue[1] = (x, y)
-            occlusion_b = 1
-            if x > 1920:
-                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
-            if y > 1088:
-                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
-        else:
-            blue_2.appendleft(global_approx_blue[1])
-            blue_list_2 = [tuple(array[0]) for array in blue_2]
-            occlusion_b = 0
+        for j in range(len(distances_b1)):
+            if (distances_b1[j] > x / 2 - y and distances_b1[j] < x / 2) and \
+                    (distances_b2[j] > x / 2 - y and distances_b2[j] < x / 2) and \
+                    (distances_b1[j + 1] < y / 2 or distances_b1[j + 1] < distances_b2[j + 1] ) or \
+                    if_error_blue == 1 and i_blue == 2:
+                start_time = time.time()
+                x,y = kf(blue_list_2)
+                # 获取循环结束的时间
+                end_time = time.time()
+                # 计算执行时间
+                execution_time = end_time - start_time
+                print("blue2循环执行时间为: {:.6f} 秒".format(execution_time))
+                blue_2.appendleft([[x,y]])
+                blue_list_2 = [tuple(array[0]) for array in blue_2]
+                cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
+                global_approx_blue[1] = (x, y)
+                occlusion_b = 1
+                if x > 1920:
+                    cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+                if y > 1088:
+                    cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
+            else:
+                blue_2.appendleft(global_approx_blue[1])
+                blue_list_2 = [tuple(array[0]) for array in blue_2]
+                occlusion_b = 0
 
         # 蓝色第三个点的历史记录
-        if if_error_blue == 1 and i_blue == 3:
-            start_time = time.time()
-            x, y = kf(blue_list_3)
-            # 获取循环结束的时间
-            end_time = time.time()
-            # 计算执行时间
-            execution_time = end_time - start_time
-            print("blue3循环执行时间为: {:.6f} 秒".format(execution_time))
-            blue_3.appendleft([[x, y]])
-            blue_list_3 = [tuple(array[0]) for array in blue_3]
-            cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
-            global_approx_blue[2] = (x, y)
-            occlusion_b = 1
-            if x > 1920:
-                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
-            if y > 1088:
-                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
-        else:
-            blue_3.appendleft(global_approx_blue[2])
-            blue_list_3 = [tuple(array[0]) for array in blue_3]
-            occlusion_b = 0
+        for j in range(len(distances_b2)):
+            if (distances_b2[j] > x / 2 - y and distances_b2[j] < x / 2) and \
+                    (distances_b3[j] > x / 2 - y and distances_b3[j] < x / 2) and \
+                    (distances_b2[j + 1] < y / 2 or distances_b2[j + 1] < distances_b3[j + 1] ) or \
+                    if_error_blue == 1 and i_blue == 3:
+
+                start_time = time.time()
+                x, y = kf(blue_list_3)
+                # 获取循环结束的时间
+                end_time = time.time()
+                # 计算执行时间
+                execution_time = end_time - start_time
+                print("blue3循环执行时间为: {:.6f} 秒".format(execution_time))
+                blue_3.appendleft([[x, y]])
+                blue_list_3 = [tuple(array[0]) for array in blue_3]
+                cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
+                global_approx_blue[2] = (x, y)
+                occlusion_b = 1
+                if x > 1920:
+                    cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+                if y > 1088:
+                    cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
+            else:
+                blue_3.appendleft(global_approx_blue[2])
+                blue_list_3 = [tuple(array[0]) for array in blue_3]
+                occlusion_b = 0
 
         # 蓝色第四个点的历史记录
-        if if_error_blue == 1 and i_blue == 4:
-            start_time = time.time()
-            x, y = kf(blue_list_4)
-            # 获取循环结束的时间
-            end_time = time.time()
-            # 计算执行时间
-            execution_time = end_time - start_time
-            print("blue4循环执行时间为: {:.6f} 秒".format(execution_time))
-            blue_4.appendleft([[x, y]])
-            blue_list_4 = [tuple(array[0]) for array in blue_4]
-            cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
-            global_approx_blue[3] = (x, y)
-            occlusion_b = 1
-            if x > 1920:
-                cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
-            if y > 1088:
-                cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
-        else:
-            blue_4.appendleft(global_approx_blue[3])
-            blue_list_4 = [tuple(array[0]) for array in blue_4]
-            occlusion_b = 0
+        for j in range(len(distances_b3)):
+            if (distances_b3[j] > x / 2 - y and distances_b3[j] < x / 2) and \
+                    (distances_b4[j] > x / 2 - y and distances_b4[j] < x / 2) and \
+                    (distances_b3[j + 1] < y / 2 or distances_b3[j + 1] < distances_b4[j + 1] ) or \
+                    if_error_blue == 1 and i_blue == 3:
+                start_time = time.time()
+                x, y = kf(blue_list_4)
+                # 获取循环结束的时间
+                end_time = time.time()
+                # 计算执行时间
+                execution_time = end_time - start_time
+                print("blue4循环执行时间为: {:.6f} 秒".format(execution_time))
+                blue_4.appendleft([[x, y]])
+                blue_list_4 = [tuple(array[0]) for array in blue_4]
+                cv2.circle(frame, (int(x), int(y)), 5, (255, 255, 255), 4)
+                global_approx_blue[3] = (x, y)
+                occlusion_b = 1
+                if x > 1920:
+                    cv2.circle(frame, (1920, int(y)), 5, (0, 0, 255), 4)
+                if y > 1088:
+                    cv2.circle(frame, (int(x), 1088), 5, (0, 0, 255), 4)
+            else:
+                blue_4.appendleft(global_approx_blue[3])
+                blue_list_4 = [tuple(array[0]) for array in blue_4]
+                occlusion_b = 0
 
         # 黄色tapes顶点预测
         # 黄色第一个点的历史记录
