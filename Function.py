@@ -78,7 +78,7 @@ def kf(point_list):
     # 状态估计协方差矩阵P初始化
     P = np.eye(4)
     # 判断是否存在遮挡
-    x1, y1 = point_list[9]
+    x1, y1 = point_list[149]
     initial_state = np.array([[x1, y1, 0, 0]]).T
 
     # 状态初始化
@@ -87,16 +87,16 @@ def kf(point_list):
     Z = np.array(initial_state)
     # trace_list = []  # 保存目标box的轨迹
 
-    approx3 = point_list[0:10]
+    approx3 = point_list[0:150]
 
-    for i in range(10):
+    for i in range(150):
         #print(f'这是第 {i + 1} 次循环。')
 
-        dx = approx3[9 - i][0] - X_posterior[0]
-        dy = approx3[9 - i][1] - X_posterior[1]
+        dx = approx3[149 - i][0] - X_posterior[0]
+        dy = approx3[149 - i][1] - X_posterior[1]
         #print("approx3[9-i]",approx3[9 - i])
         #print("X_posterior", X_posterior)
-        Z[0:2] = np.array(list(approx3[9 - i])).reshape(-1, 1)
+        Z[0:2] = np.array(list(approx3[149 - i])).reshape(-1, 1)
         # Z[0:2] = np.array(approx2[0][0]).T
         Z[2::] = np.array([dx, dy])
         # print("Z", Z)
@@ -138,4 +138,5 @@ def kf(point_list):
     print("y", X_posterior[1])
     #print("X_posterior[:2]",X_posterior[:2])
     return x,y
+
 
